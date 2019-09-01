@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": true,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "CfDJ8LCn4qPGD8dLkp3Xwgu5D4JbErWebCNxrwQk2C50YjxfmqMmXOt1eOtpePT1Hy849Huf4nPHYrKkMBVo+1jGL6UfSsXPzDepPegUhzKt99B+bAyOYiM4vtI6++JPWbgVyg==",
+    "VSTS_AGENT_INPUT_URL": "",
+    "VSTS_AGENT_INPUT_AUTH": "",
+    "VSTS_AGENT_INPUT_TOKEN": "",
+    "VSTS_AGENT_INPUT_AGENT": "",
+    "IMAGENAME": "",
+    "ACRUSERNAME": "",
+    "ACRPASSWORD": ""
+  },
+  "ConnectionStrings": {}
+}
