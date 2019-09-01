@@ -10,7 +10,6 @@
 # NOTE: any variables defined that are not environment variables will get reset after the first execution
 # Authenticate with Azure PowerShell using MSI.
 # Remove this if you are not planning on using MSI or Azure PowerShell.
-
 if ($env:MSI_SECRET -and (Get-Module -ListAvailable Az.Accounts)) {
     Connect-AzAccount -Identity
 }
