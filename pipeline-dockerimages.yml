@@ -32,6 +32,6 @@ stages:
         azureSubscription: azstijnv1-subscription
         scriptLocation: inlineScript
         inlineScript: |
-          az acr build --registry $(acrname) --image 'azuredevopsagent:linux-{{$(BuildID)}}' --file Dockerfiles/linux-dockerfile .
+          az acr build --registry $(acrname) --image azuredevopsagent:$(BuildID) --file Dockerfiles/linux-dockerfile .
         
         
