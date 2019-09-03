@@ -1,0 +1,37 @@
+name: $(BuildID)
+
+variables:
+  acrname: sverhoacr
+
+trigger:
+  branches:
+    include:
+    - dev/*
+    - releasecluster/*
+
+  paths:
+    include:
+    - Dockerfile/*
+    exclude:
+    - README.md
+
+stages:
+- stage: 'build_linuxcontainer'
+  displayName: 'Build Linux Docker Image for Azure DevOps Agent'
+  jobs:
+  - job: 'build_linux_container'
+    displayName: 'Docker Linux Container Build Job'
+    continueOnError: false
+    pool:
+      vmImage: 'ubuntu-latest'
+    workspace:
+      clean: all
+    steps:
+    - task: AzureCLI@1
+      inputs:
+        azureSubscription: azstijnv1-subscription
+        scriptLocation: inlineScript
+        inlineScript: |
+          az acr build --registry $(acrname) --image azuredevopslinuxagent:$(Build.BuildId) --file Dockerfiles/linux-dockerfile .
+        
+        
