@@ -1,0 +1,47 @@
+name: $(BuildID)
+
+variables:
+  RGName: RG-Functions
+  FunctionAppName: svhbh54pwshfunctions
+
+trigger:
+  branches:
+    include:
+    - master
+
+  paths:
+    include:
+    - AzureFunction/*
+    exclude:
+    - README.md
+
+stages:
+  - stage: 'validate_stage_template'
+    displayName: 'Validate Function App template'
+    jobs:
+      - job: 'deploy_fa'
+        displayName: 'Release Powershell Functions'
+        continueOnError: false
+        pool:
+          queue: 'ubuntu'
+        workspace:
+          clean: all
+        steps:
+        - task: ArchiveFiles@2
+          displayName: 'Archiving DeployACIContainer Function'
+          inputs:
+            rootFolderOrFile: AzureFunction/DeployACIContainer
+            includeRootFolder: true
+            replaceExistingArchive: true
+        - task: ArchiveFiles@2
+          displayName: 'Archiving StartStopACIContainerGroup Function'
+          inputs:
+            rootFolderOrFile: AzureFunction/StartStopACIContainerGroup
+            includeRootFolder: true
+            replaceExistingArchive: true
+        - task: AzureFunctionApp@1
+          displayName: Azure Function App Deploy
+          inputs:
+            azureSubscription: svhbh54-msdn
+            appName: $(FunctionAppName)
+            package: $(System.DefaultWorkingDirectory)/**/*.zip
