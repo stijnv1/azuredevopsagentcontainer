@@ -50,3 +50,10 @@ stages:
             package: $(System.DefaultWorkingDirectory)/functions.zip
             appSettings: |
               -VSTS_AGENT_INPUT_URL $(VSTS_AGENT_INPUT_URL)
+              -VSTS_AGENT_INPUT_AUTH $(VSTS_AGENT_INPUT_AUTH)
+              -VSTS_AGENT_INPUT_TOKEN $(VSTS_AGENT_INPUT_TOKEN)
+              -VSTS_AGENT_INPUT_AGENT $(VSTS_AGENT_INPUT_AGENT)
+              -VSTS_AGENT_INPUT_POOL $(VSTS_AGENT_INPUT_POOL)
+              -IMAGENAME $(IMAGENAME)
+              -ACRUSERNAME $(ACRUSERNAME)
+              -ACRPASSWORD $(ACRPASSWORD)
