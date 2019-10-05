@@ -46,4 +46,10 @@ stages:
           inputs:
             azureSubscription: svhbh54-msdn
             appName: $(FunctionAppName)
-            package: $(System.DefaultWorkingDirectory)/*.zip
+            package: $(System.DefaultWorkingDirectory)/deployacicontainer.zip
+        - task: AzureFunctionApp@1
+          displayName: Azure Function App Deploy
+          inputs:
+            azureSubscription: svhbh54-msdn
+            appName: $(FunctionAppName)
+            package: $(System.DefaultWorkingDirectory)/startstopcontainer.zip
