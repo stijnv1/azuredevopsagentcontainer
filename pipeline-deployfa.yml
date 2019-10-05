@@ -49,4 +49,4 @@ stages:
             appName: $(FunctionAppName)
             package: $(System.DefaultWorkingDirectory)/functions.zip
             configurationStrings: |
-              -VSTS_AGENT_INPUT_URL:$(VSTS_AGENT_INPUT_URL)
+              -VSTS_AGENT_INPUT_URL $(VSTS_AGENT_INPUT_URL)
