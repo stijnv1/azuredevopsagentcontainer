@@ -48,5 +48,5 @@ stages:
             azureSubscription: svhbh54-msdn
             appName: $(FunctionAppName)
             package: $(System.DefaultWorkingDirectory)/functions.zip
-            configurationStrings: |
+            appSettings: |
               -VSTS_AGENT_INPUT_URL $(VSTS_AGENT_INPUT_URL)
