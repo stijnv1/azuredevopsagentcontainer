@@ -7,7 +7,7 @@ trigger:
   branches:
     include:
     - dev/*
-    - release/*
+    - master/*
 
   paths:
     include:
@@ -35,12 +35,12 @@ stages:
             resourceGroupName: $(RGName)
             location: 'West Europe'
             csmFile: 'ARMTemplates/templates/deploy-azurefunctionapp.json'
-            csmParametersFile: 'ARMTemplates/parameters/vm_squiddeploy-azurefunctionapp.parameters.json'
+            csmParametersFile: 'ARMTemplates/parameters/deploy-azurefunctionapp.parameters.json'
             deploymentMode: Validation
   - stage:
     displayName: "Release Function App ARM template"
     dependsOn: 'validate_stage_template'
-    condition: and(succeeded(),or(startsWith(variables['build.sourceBranch'], 'refs/heads/release'),startsWith(variables['build.sourceBranch'], 'refs/tags/v')))
+    condition: and(succeeded(),or(startsWith(variables['build.sourceBranch'], 'refs/heads/master'),startsWith(variables['build.sourceBranch'], 'refs/tags/v')))
     jobs:
     - job: 'release_squid'
       displayName: "Release Function App ARM Template"
@@ -55,5 +55,5 @@ stages:
           resourceGroupName: $(RGName)
           location: 'West Europe'
           csmFile: 'ARMTemplates/templates/deploy-azurefunctionapp.json'
-          csmParametersFile: 'ARMTemplates/parameters/vm_squiddeploy-azurefunctionapp.parameters.json'
+          csmParametersFile: 'ARMTemplates/parameters/deploy-azurefunctionapp.parameters.json'
           deploymentMode: Incremental
