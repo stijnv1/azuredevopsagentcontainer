@@ -30,26 +30,13 @@ stages:
         - task: ArchiveFiles@2
           displayName: 'Archiving DeployACIContainer Function'
           inputs:
-            rootFolderOrFile: AzureFunction/DeployACIContainer
-            includeRootFolder: true
+            rootFolderOrFile: AzureFunction/
+            includeRootFolder: false
             replaceExistingArchive: true
-            archiveFile: $(System.DefaultWorkingDirectory)/deployacicontainer.zip
-        - task: ArchiveFiles@2
-          displayName: 'Archiving StartStopACIContainerGroup Function'
-          inputs:
-            rootFolderOrFile: AzureFunction/StartStopACIContainerGroup
-            includeRootFolder: true
-            replaceExistingArchive: true
-            archiveFile: $(System.DefaultWorkingDirectory)/startstopcontainer.zip
+            archiveFile: $(System.DefaultWorkingDirectory)/functions.zip
         - task: AzureFunctionApp@1
           displayName: Azure Function App Deploy
           inputs:
             azureSubscription: svhbh54-msdn
             appName: $(FunctionAppName)
-            package: $(System.DefaultWorkingDirectory)/deployacicontainer.zip
-        - task: AzureFunctionApp@1
-          displayName: Azure Function App Deploy
-          inputs:
-            azureSubscription: svhbh54-msdn
-            appName: $(FunctionAppName)
-            package: $(System.DefaultWorkingDirectory)/startstopcontainer.zip
+            package: $(System.DefaultWorkingDirectory)/functions.zip
