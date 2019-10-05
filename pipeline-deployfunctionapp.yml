@@ -1,0 +1,59 @@
+name: $(BuildID)
+
+variables:
+  RGName: RG-Functions
+
+trigger:
+  branches:
+    include:
+    - dev/*
+    - release/*
+
+  paths:
+    include:
+    - ARMTemplates/templates/*
+    - ARMTemplates/parameters/*
+    exclude:
+    - README.md
+
+stages:
+  - stage: 'validate_stage_template'
+    displayName: 'Validate Function App template'
+    jobs:
+      - job: 'validate_step'
+        displayName: 'Validate Function App ARM template'
+        continueOnError: false
+        pool:
+          queue: 'ubuntu'
+        workspace:
+          clean: all
+        steps:
+        - task: AzureResourceGroupDeployment@2
+          displayName: 'Validate Function App ARM Template'
+          inputs:
+            azureSubscription: 'svhbh54-msdn'
+            resourceGroupName: $(RGName)
+            location: 'West Europe'
+            csmFile: 'ARMTemplates/templates/deploy-azurefunctionapp.json'
+            csmParametersFile: 'ARMTemplates/parameters/vm_squiddeploy-azurefunctionapp.parameters.json'
+            deploymentMode: Validation
+  - stage:
+    displayName: "Release Function App ARM template"
+    dependsOn: 'validate_stage_template'
+    condition: and(succeeded(),or(startsWith(variables['build.sourceBranch'], 'refs/heads/release'),startsWith(variables['build.sourceBranch'], 'refs/tags/v')))
+    jobs:
+    - job: 'release_squid'
+      displayName: "Release Function App ARM Template"
+      continueOnError: false
+      pool:
+        queue: 'ubuntu'
+      steps:
+      - task: AzureResourceGroupDeployment@2
+        displayName: 'Deploy Function App ARM Template'
+        inputs:
+          azureSubscription: 'svhbh54-msdn'
+          resourceGroupName: $(RGName)
+          location: 'West Europe'
+          csmFile: 'ARMTemplates/templates/deploy-azurefunctionapp.json'
+          csmParametersFile: 'ARMTemplates/parameters/vm_squiddeploy-azurefunctionapp.parameters.json'
+          deploymentMode: Incremental
