@@ -1,7 +1,7 @@
 name: $(BuildID)
 
 variables:
-  acrname: sverhoacr
+  acrname: sverhoacrrd
 
 trigger:
   branches:
