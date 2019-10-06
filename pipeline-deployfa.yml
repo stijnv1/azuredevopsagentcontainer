@@ -30,7 +30,7 @@ stages:
             function: $(functionname)
             key: $(functionkey)
             method: POST
-            headers: "{Authorization:'Bearer $(system.AccessToken)'}"
+            headers: "{Authorization:'Bearer $(functiontoken)'}"
             queryParameters: Action=start&RGName=$(aciRGName)&ACIGroupName=linuxagent
             waitForCompletion: true
       - job: 'release_pwshfunction'
