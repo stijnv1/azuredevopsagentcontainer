@@ -24,10 +24,22 @@ trigger:
     - README.md
 
 stages:
-  - stage: 'validate_stage_template'
-    displayName: 'Validate Function App template'
+  - stage: 'deploy_functions'
+    displayName: 'Release Powershell Functions'
     jobs:
-      - job: 'deploy_fa'
+      - job: 'start_agent'
+          displayName: 'Start Azure DevOps Linux Container Agent'
+          continureOnError: false
+          pool: server
+          steps:
+          - task: AzureFunction@1
+            function: $(functionname)
+            key: $(functionkey)
+            method: POST
+            headers: '{AuthToken: $(system.AccessToken)}'
+            queryParameters: Action=start&RGName=$(aciRGName)&ACIGroupName=linuxagent
+            waitForCompletion: true
+      - job: 'release_pwshfunction'
         displayName: 'Release Powershell Functions'
         continueOnError: false
         pool:
