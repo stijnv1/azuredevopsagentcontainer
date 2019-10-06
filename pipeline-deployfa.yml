@@ -13,6 +13,8 @@ trigger:
 
 variables:
   - group: PowershellFunctions
+  - name: system.debug
+    value: true
 
 stages:
   - stage: 'deploy_functions'
