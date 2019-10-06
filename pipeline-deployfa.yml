@@ -37,7 +37,7 @@ stages:
         displayName: 'Release Powershell Functions'
         continueOnError: false
         pool:
-          queue: 'ubuntu'
+          name: 'ACIPool'
         workspace:
           clean: all
         steps:
