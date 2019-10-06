@@ -32,7 +32,6 @@ stages:
             method: POST
             headers: "{Authorization:'Bearer $(functiontoken)'}"
             queryParameters: Action=start&RGName=$(aciRGName)&ACIGroupName=linuxagent
-            waitForCompletion: true
       - job: 'release_pwshfunction'
         displayName: 'Release Powershell Functions'
         continueOnError: false
