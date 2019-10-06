@@ -1,17 +1,5 @@
 name: $(BuildID)
 
-variables:
-  RGName: RG-Functions
-  FunctionAppName: svhbh54pwshfunctions
-  VSTS_AGENT_INPUT_URL: "https://dev.azure.com/stijnverhoeven-realdolmen"
-  VSTS_AGENT_INPUT_AUTH: "pat"
-  VSTS_AGENT_INPUT_TOKEN: "@Microsoft.KeyVault(SecretUri=https://svhbh54keyvault.vault.azure.net/secrets/AzureDevopsPAT/0f38f3e90fd94d498f44135e6b1d3eaf)"
-  VSTS_AGENT_INPUT_AGENT: "linuxagent"
-  VSTS_AGENT_INPUT_POOL: "ACIPool"
-  IMAGENAME: "sverhoacrrd.azurecr.io/azuredevopslinuxagent:1989"
-  ACRUSERNAME: "sverhoacrrd"
-  ACRPASSWORD: "@Microsoft.KeyVault(SecretUri=https://svhbh54keyvault.vault.azure.net/secrets/ACRPassword/722b5b4b41af4dbfb28b728fd8a85a78)"
-
 trigger:
   branches:
     include:
@@ -22,6 +10,9 @@ trigger:
     - AzureFunction/*
     exclude:
     - README.md
+
+variables:
+  - group: PowershellFunctions
 
 stages:
   - stage: 'deploy_functions'
