@@ -20,7 +20,7 @@ stages:
     jobs:
       - job: 'start_agent'
         displayName: 'Start Azure DevOps Linux Container Agent'
-        continureOnError: false
+        continueOnError: false
         pool: server
         steps:
         - task: AzureFunction@1
