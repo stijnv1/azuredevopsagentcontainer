@@ -30,7 +30,7 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     apt-get update ; `
     apt-get install dotnet-sdk-2.2 -y ; `
     apt-get install zip -y ; `
-    Invoke-WebRequest -Uri "https://storage.googleapis.com/kubernetes-release/release/$env:kubectlversion/bin/linux/amd64/kubectl" -OutFile "./kubectl" -UseBasicParsing ; `
+    Invoke-WebRequest -Uri "https://storage.googleapis.com/kubernetes-release/release/v$env:kubectlversion/bin/linux/amd64/kubectl" -OutFile "./kubectl" -UseBasicParsing ; `
     chmod +x ./kubectl ; `
     mv ./kubectl /usr/local/bin/kubectl ;
 
