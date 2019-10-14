@@ -3,7 +3,10 @@
 FROM mcr.microsoft.com/powershell:6.2.0-ubuntu-18.04
 
 ARG agentversion=2.155.1
+ARG kubectlversion=1.14.6
+
 ENV agentversion=${agentversion}
+ENV kubectlversion=${kubectlversion}
 
 SHELL [ "pwsh", "-NoProfile", "-Command" ]
 
@@ -26,6 +29,9 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     apt-get install apt-transport-https -y ; `
     apt-get update ; `
     apt-get install dotnet-sdk-2.2 -y ; `
-    apt-get install zip -y
+    apt-get install zip -y ; `
+    Invoke-WebRequest -Uri "https://storage.googleapis.com/kubernetes-release/release/v$env:kubectlversion/bin/linux/amd64/kubectl" -OutFile "./kubectl" -UseBasicParsing ; `
+    chmod +x ./kubectl ; `
+    mv ./kubectl /usr/local/bin/kubectl ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
