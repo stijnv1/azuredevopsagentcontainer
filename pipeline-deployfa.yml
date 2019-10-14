@@ -1,0 +1,57 @@
+name: $(BuildID)
+
+trigger:
+  branches:
+    include:
+    - master
+
+  paths:
+    include:
+    - AzureFunction/*
+    exclude:
+    - README.md
+
+variables:
+  - group: PowershellFunctions
+  - name: system.debug
+    value: true
+
+stages:
+  - stage: 'deploy_functions'
+    displayName: 'Release Powershell Functions'
+    jobs:
+      - job: 'start_agent'
+        displayName: 'Start Azure DevOps Linux Container Agent'
+        continueOnError: false
+        pool: server
+        steps:
+        - task: AzureFunction@1
+          inputs:
+            function: $(functionname)
+            key: $(functionkey)
+            method: POST
+            headers: "{Authorization:'Bearer $(functiontoken)'}"
+            queryParameters: Action=start&RGName=$(aciRGName)&ACIGroupName=linuxagent
+      - job: 'release_pwshfunction'
+        displayName: 'Release Powershell Functions'
+        dependsOn: 'start_agent'
+        continueOnError: false
+        pool:
+          name: 'ACIPool'
+        workspace:
+          clean: all
+        steps:
+        - task: ArchiveFiles@2
+          displayName: 'Archiving DeployACIContainer Function'
+          inputs:
+            rootFolderOrFile: AzureFunction/
+            includeRootFolder: false
+            replaceExistingArchive: true
+            archiveFile: $(System.DefaultWorkingDirectory)/functions.zip
+        - task: AzureFunctionApp@1
+          displayName: Azure Function App Deploy
+          inputs:
+            azureSubscription: svhbh54-msdn
+            appName: $(FunctionAppName)
+            package: $(System.DefaultWorkingDirectory)/functions.zip
+            appSettings: -VSTS_AGENT_INPUT_URL $(VSTS_AGENT_INPUT_URL) -VSTS_AGENT_INPUT_AUTH $(VSTS_AGENT_INPUT_AUTH) -VSTS_AGENT_INPUT_TOKEN $(VSTS_AGENT_INPUT_TOKEN) -VSTS_AGENT_INPUT_AGENT $(VSTS_AGENT_INPUT_AGENT) -VSTS_AGENT_INPUT_POOL $(VSTS_AGENT_INPUT_POOL) -IMAGENAME $(IMAGENAME) -ACRUSERNAME $(ACRUSERNAME) -ACRPASSWORD $(ACRPASSWORD)
