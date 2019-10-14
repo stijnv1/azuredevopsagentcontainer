@@ -26,6 +26,10 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     apt-get install apt-transport-https -y ; `
     apt-get update ; `
     apt-get install dotnet-sdk-2.2 -y ; `
-    apt-get install zip -y
+    apt-get install zip -y ; `
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - ; `
+    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list ; `
+    apt-get update ; `
+    apt-get install -y kubectl ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
