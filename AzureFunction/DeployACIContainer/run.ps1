@@ -10,6 +10,13 @@ Write-Host "PowerShell HTTP trigger function processed a request."
 $rgName = $Request.Query.RGName
 $containergroupName = $Request.Query.ACIGroupName
 
+# if no query parameters found, use body
+if (-not $rgName -or -not $containergroupName)
+{
+    $rgName = $Request.Body.RGName
+    $containergroupName = $Request.Body.ACIGroupName
+}
+
 # check if VSTS_AGENT_INPUT_TOKEN and ACRPASSWORD is valid (keyvault reference used, does not work for local development)
 # if local development, use the Uri of the secret to get the secret value
 if ($env:VSTS_AGENT_INPUT_TOKEN -like "@Microsoft.KeyVault(SecretUri*")
