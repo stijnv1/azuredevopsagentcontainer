@@ -11,6 +11,13 @@ $action = $Request.Query.Action
 $rgName = $Request.Query.RGName
 $containergroupName = $Request.Query.ACIGroupName
 
+if (-not $rgName -or -not $containergroupName -or -not $action)
+{
+    $rgName = $Request.Body.RGName
+    $containergroupName = $Request.Body.ACIGroupName
+    $action = $Request.Body.Action
+}
+
 try
 {
     switch ($action) {
@@ -52,6 +59,8 @@ try
             }
          }
         Default {
+            $status = [HttpStatusCode]::BadRequest
+            $body = "Error occured during start/stop of ACI Group"
         }
     }
     
