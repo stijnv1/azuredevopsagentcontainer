@@ -2,7 +2,7 @@
 
 FROM mcr.microsoft.com/powershell:6.2.0-ubuntu-18.04
 
-ARG agentversion=2.155.1
+ARG agentversion=2.158.0
 ARG kubectlversion=1.14.6
 
 ENV agentversion=${agentversion}
@@ -26,12 +26,13 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     Invoke-WebRequest -Uri https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -OutFile ./packages-microsoft-prod.deb -UseBasicParsing ; `
     dpkg -i ./packages-microsoft-prod.deb ; `
     rm ./packages-microsoft-prod.deb ; `
-    apt-get install apt-transport-https -y ; `
+    apt-get install ca-certificates curl apt-transport-https lsb-release gnupg -y ; `
     apt-get update ; `
     apt-get install dotnet-sdk-2.2 -y ; `
     apt-get install zip -y ; `
     Invoke-WebRequest -Uri "https://storage.googleapis.com/kubernetes-release/release/v$env:kubectlversion/bin/linux/amd64/kubectl" -OutFile "./kubectl" -UseBasicParsing ; `
     chmod +x ./kubectl ; `
-    mv ./kubectl /usr/local/bin/kubectl ;
+    mv ./kubectl /usr/local/bin/kubectl ; `
+    curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
