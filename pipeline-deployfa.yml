@@ -22,7 +22,6 @@ stages:
     jobs:
       - job: 'release_pwshfunction'
         displayName: 'Release Powershell Functions'
-        dependsOn: 'start_agent'
         continueOnError: false
         pool:
           name: 'ACIPool'
