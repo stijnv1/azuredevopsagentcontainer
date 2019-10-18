@@ -26,12 +26,17 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     Invoke-WebRequest -Uri https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -OutFile ./packages-microsoft-prod.deb -UseBasicParsing ; `
     dpkg -i ./packages-microsoft-prod.deb ; `
     rm ./packages-microsoft-prod.deb ; `
-    apt-get install apt-transport-https -y ; `
+    apt-get install ca-certificates curl apt-transport-https lsb-release gnupg -y ; `
     apt-get update ; `
     apt-get install dotnet-sdk-2.2 -y ; `
     apt-get install zip -y ; `
     Invoke-WebRequest -Uri "https://storage.googleapis.com/kubernetes-release/release/v$env:kubectlversion/bin/linux/amd64/kubectl" -OutFile "./kubectl" -UseBasicParsing ; `
     chmod +x ./kubectl ; `
-    mv ./kubectl /usr/local/bin/kubectl ;
+    mv ./kubectl /usr/local/bin/kubectl ; `
+    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null ; `
+    AZ_REPO=$(lsb_release -cs) ; `
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | tee /etc/apt/sources.list.d/azure-cli.list ; `
+    apt-get update ; `
+    apt-get install azure-cli -y ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
