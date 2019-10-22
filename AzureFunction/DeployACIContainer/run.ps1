@@ -56,42 +56,58 @@ for ($i = 0; $i -lt $numberOfAgents; $i++) {
         "VSTS_AGENT_INPUT_POOL" = $env:VSTS_AGENT_INPUT_POOL
     }
 
-    Set-Variable -Name "linuxagent$i" -Value $azdevopsagentVariables
-}
+    # create ps credential for access to acr
+    $secpasswd = ConvertTo-SecureString $acrpassword -AsPlainText -Force
+    $creds = New-Object System.Management.Automation.PSCredential ($env:ACRUSERNAME, $secpasswd)
+    $azcontext = Get-AzContext
 
-
-# create ps credential for access to acr
-$secpasswd = ConvertTo-SecureString $acrpassword -AsPlainText -Force
-$creds = New-Object System.Management.Automation.PSCredential ($env:ACRUSERNAME, $secpasswd)
-
-# create container group
-try
-{
-    for ($i = 0; $i -lt $numberOfAgents; $i++) {
-        $acigroup = New-AzContainerGroup -ResourceGroupName $rgName `
-                        -Name "$containergroupName-$i" `
+    # create container group
+    try
+    {
+        $ScriptBlock = {
+            param(
+                $rgName,
+                $containergroupName,
+                $azdevopsagentVariables,
+                $creds,
+                $azcontext,
+                $counter
+            )
+            
+            Set-AzContext -Context $azcontext 
+            $acigroup = New-AzContainerGroup -ResourceGroupName $rgName `
+                        -Name "$containergroupName-$counter" `
                         -Image $env:IMAGENAME `
-                        -EnvironmentVariable "$linuxagent$i" `
+                        -EnvironmentVariable $azdevopsagentVariables `
                         -OsType Linux `
                         -RegistryCredential $creds `
-                        -ErrorAction Stop   
-    }
+                        -ErrorAction Stop
+        }
 
-    $body = "container groups have been deployed"
-    $status = [HttpStatusCode]::OK
-    # Associate values to output bindings by calling 'Push-OutputBinding'.
-    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-        StatusCode = $status
-        Body = $body
-    })   
+        $job = Start-ThreadJob -ScriptBlock $ScriptBlock -ArgumentList $rgName,$containergroupName,$azdevopsagentVariables,$creds,$azcontext,$i
+         
+    }
+    catch
+    {
+        $body = "Error occured during container deployment: $_"
+        $status = [HttpStatusCode]::InternalServerError
+        # Associate values to output bindings by calling 'Push-OutputBinding'.
+        Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+            StatusCode = $status
+            Body = $body
+        })
+    }
 }
-catch
-{
-    $body = "Error occured during container deployment: $_"
-    $status = [HttpStatusCode]::InternalServerError
-    # Associate values to output bindings by calling 'Push-OutputBinding'.
-    Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
-        StatusCode = $status
-        Body = $body
-    })
+
+[Array]$acis = $()
+Get-Job | ForEach-Object {
+    $acis += Receive-Job -Job $_ -Wait
 }
+
+$body = @{aciJobs=$acis} | ConvertTo-Json
+$status = [HttpStatusCode]::OK
+# Associate values to output bindings by calling 'Push-OutputBinding'.
+Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
+    StatusCode = $status
+    Body = $body
+}) 
