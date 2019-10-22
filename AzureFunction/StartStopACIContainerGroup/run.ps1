@@ -25,7 +25,7 @@ try
             if ((Get-AzContainerGroup -ResourceGroupName $rgName -Name $containergroupName).State -eq "Running")
             {
                 $status = [HttpStatusCode]::OK
-                $body = "$containergroupName already started"
+                $body = @{status="already started"} | ConvertTo-Json
             }
             else
             {
@@ -36,7 +36,7 @@ try
                                     -Force
                
                 $status = [HttpStatusCode]::OK
-                $body = "$containergroupName action $action executed"
+                $body = @{status="start successful"} | ConvertTo-Json
             }
          }
     
@@ -55,12 +55,13 @@ try
                                     -Force
     
                 $status = [HttpStatusCode]::OK
-                $body = "$containergroupName action $action executed"
+                
+                $body = @{status="stop successful"} | ConvertTo-Json
             }
          }
         Default {
             $status = [HttpStatusCode]::BadRequest
-            $body = "Error occured during start/stop of ACI Group"
+            $body = @{status="error"} | ConvertTo-Json
         }
     }
     
@@ -72,7 +73,7 @@ try
 }
 catch
 {
-    $body = "Error occured during container deployment: $_"
+    $body = @{status="error";message=$_} | ConvertTo-Json
     $status = [HttpStatusCode]::InternalServerError
     # Associate values to output bindings by calling 'Push-OutputBinding'.
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
