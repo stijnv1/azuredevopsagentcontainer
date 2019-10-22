@@ -1,7 +1,9 @@
 name: $(BuildID)
 
 variables:
-  RGName: RG-Functions
+  - name: RGName
+    value: RG-Functions
+  - group: PowershellFunctions
 
 trigger:
   branches:
@@ -17,7 +19,7 @@ trigger:
     - README.md
 
 variables:
-  - group: PowershellFunctions
+  
 
 stages:
   - stage: 'validate_stage_template'
