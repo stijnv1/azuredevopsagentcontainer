@@ -18,9 +18,6 @@ trigger:
     exclude:
     - README.md
 
-variables:
-  
-
 stages:
   - stage: 'validate_stage_template'
     displayName: 'Validate Function App template'
