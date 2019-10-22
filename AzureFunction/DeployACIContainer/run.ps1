@@ -71,7 +71,7 @@ try
         $acigroup = New-AzContainerGroup -ResourceGroupName $rgName `
                         -Name "$containergroupName-$i" `
                         -Image $env:IMAGENAME `
-                        -EnvironmentVariable $linuxagent$i `
+                        -EnvironmentVariable "$linuxagent$i" `
                         -OsType Linux `
                         -RegistryCredential $creds `
                         -ErrorAction Stop   
