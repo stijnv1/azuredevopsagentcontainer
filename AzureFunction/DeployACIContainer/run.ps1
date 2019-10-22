@@ -9,12 +9,14 @@ Write-Host "PowerShell HTTP trigger function processed a request."
 # Interact with query parameters or the body of the request.
 $rgName = $Request.Query.RGName
 $containergroupName = $Request.Query.ACIGroupName
+$numberOfAgents = $Request.Query.NumberOfAgents
 
 # if no query parameters found, use body
-if (-not $rgName -or -not $containergroupName)
+if (-not $rgName -or -not $containergroupName -or -not $numberOfAgents)
 {
     $rgName = $Request.Body.RGName
     $containergroupName = $Request.Body.ACIGroupName
+    $numberOfAgents = $Request.Body.NumberOfAgents
 }
 
 # check if VSTS_AGENT_INPUT_TOKEN and ACRPASSWORD is valid (keyvault reference used, does not work for local development)
@@ -42,13 +44,21 @@ else
 }
 
 # create environmental variable hashtable
-$azdevopsagentVariables = @{
-    "VSTS_AGENT_INPUT_URL" = $env:VSTS_AGENT_INPUT_URL;
-    "VSTS_AGENT_INPUT_AUTH" = $env:VSTS_AGENT_INPUT_AUTH;
-    "VSTS_AGENT_INPUT_TOKEN" = $pattoken;
-    "VSTS_AGENT_INPUT_AGENT" = $env:VSTS_AGENT_INPUT_AGENT;
-    "VSTS_AGENT_INPUT_POOL" = $env:VSTS_AGENT_INPUT_POOL
+for ($i = 0; $i -lt $numberOfAgents; $i++) {
+    $agentname = $env:VSTS_AGENT_INPUT_AGENT
+    $agentname = "$agentname-$i"
+
+    $azdevopsagentVariables = @{
+        "VSTS_AGENT_INPUT_URL" = $env:VSTS_AGENT_INPUT_URL;
+        "VSTS_AGENT_INPUT_AUTH" = $env:VSTS_AGENT_INPUT_AUTH;
+        "VSTS_AGENT_INPUT_TOKEN" = $pattoken;
+        "VSTS_AGENT_INPUT_AGENT" = $agentname;
+        "VSTS_AGENT_INPUT_POOL" = $env:VSTS_AGENT_INPUT_POOL
+    }
+
+    Set-Variable -Name "linuxagent$i" -Value $azdevopsagentVariables
 }
+
 
 # create ps credential for access to acr
 $secpasswd = ConvertTo-SecureString $acrpassword -AsPlainText -Force
@@ -57,15 +67,17 @@ $creds = New-Object System.Management.Automation.PSCredential ($env:ACRUSERNAME,
 # create container group
 try
 {
-    $acigroup = New-AzContainerGroup -ResourceGroupName $rgName `
-                -Name $containergroupName `
-                -Image $env:IMAGENAME `
-                -EnvironmentVariable $azdevopsagentVariables `
-                -OsType Linux `
-                -RegistryCredential $creds `
-                -ErrorAction Stop
+    for ($i = 0; $i -lt $numberOfAgents; $i++) {
+        $acigroup = New-AzContainerGroup -ResourceGroupName $rgName `
+                        -Name "$containergroupName-$i" `
+                        -Image $env:IMAGENAME `
+                        -EnvironmentVariable $linuxagent$i `
+                        -OsType Linux `
+                        -RegistryCredential $creds `
+                        -ErrorAction Stop   
+    }
 
-    $body = "container group $containergroupName has been deployed"
+    $body = "container groups have been deployed"
     $status = [HttpStatusCode]::OK
     # Associate values to output bindings by calling 'Push-OutputBinding'.
     Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
