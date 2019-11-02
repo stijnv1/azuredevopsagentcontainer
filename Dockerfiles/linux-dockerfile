@@ -33,7 +33,11 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     Invoke-WebRequest -Uri "https://storage.googleapis.com/kubernetes-release/release/v$env:kubectlversion/bin/linux/amd64/kubectl" -OutFile "./kubectl" -UseBasicParsing ; `
     chmod +x ./kubectl ; `
     mv ./kubectl /usr/local/bin/kubectl ; `
-    curl -L https://git.io/get_helm.sh | bash ; `
+    #curl -L https://git.io/get_helm.sh | bash ; `
+    Invoke-WebRequest -Uri https://get.helm.sh/helm-v3.0.0-rc.2-linux-amd64.tar.gz -OutFile ./helm-v3.0.0-rc.2-linux-amd64.tar.gz -UseBasicParsing ; `
+    tar -xvzf ./helm-v3.0.0-rc.2-linux-amd64.tar.gz
+    mv linux-amd64/helm /usr/local/bin
+    rm -R linux-amd64/
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
