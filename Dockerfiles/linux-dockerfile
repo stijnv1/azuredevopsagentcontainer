@@ -38,6 +38,7 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     tar -xvzf ./helm-v3.0.0-rc.2-linux-amd64.tar.gz ; `
     mv linux-amd64/helm /usr/local/bin ; `
     rm -R linux-amd64/ ; `
+    rm helm-v3.0.0-rc.2-linux-amd64.tar.gz ; `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
