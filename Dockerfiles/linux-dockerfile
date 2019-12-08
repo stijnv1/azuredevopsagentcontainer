@@ -2,7 +2,7 @@
 
 FROM mcr.microsoft.com/powershell:6.2.0-ubuntu-18.04
 
-ARG agentversion=2.160.0
+ARG agentversion=2.160.1
 ARG kubectlversion=1.14.6
 
 ENV agentversion=${agentversion}
