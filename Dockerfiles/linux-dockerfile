@@ -3,13 +3,15 @@
 FROM mcr.microsoft.com/powershell:6.2.0-ubuntu-18.04
 
 ARG agentversion=2.163.2
-ARG kubectlversion=1.14.8
+ARG kubectlversion=1.15.5
 ARG helmversion=helm-v3.0.2
+ARG DockerChannel="stable"
+ARG DockerVersion="19.03.5"
 
 ENV agentversion=${agentversion}
 ENV kubectlversion=${kubectlversion}
-ENV DOCKER_CHANNEL stable
-ENV DOCKER_VERSION 19.03.5
+ENV DOCKER_CHANNEL=${DockerChannel}
+ENV DOCKER_VERSION=${DockerVersion}
 
 SHELL [ "pwsh", "-NoProfile", "-Command" ]
 
