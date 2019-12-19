@@ -45,8 +45,8 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     rm -R linux-amd64/ ; `
     rm $env:helmversion-linux-amd64.tar.gz ; `
     Invoke-WebRequest -Uri "https://download.docker.com/linux/static/$env:DOCKER_CHANNEL/x86_64/docker-$env:DOCKER_VERSION.tgz" -OutFile ./docker.tgz -UseBasicParsing ; `
-    tar --extract --file docker.tgz --strip-components 1 --directory /usr/local/bin/ `
-    rm docker.tgz `
+    tar --extract --file ./docker.tgz --strip-components 1 --directory /usr/local/bin/ ; `
+    rm docker.tgz ; `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
