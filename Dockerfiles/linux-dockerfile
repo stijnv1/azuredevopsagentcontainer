@@ -8,6 +8,8 @@ ARG helmversion=helm-v3.0.2
 
 ENV agentversion=${agentversion}
 ENV kubectlversion=${kubectlversion}
+ENV DOCKER_CHANNEL stable
+ENV DOCKER_VERSION 19.03.5
 
 SHELL [ "pwsh", "-NoProfile", "-Command" ]
 
@@ -40,6 +42,9 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     mv linux-amd64/helm /usr/local/bin ; `
     rm -R linux-amd64/ ; `
     rm $env:helmversion-linux-amd64.tar.gz ; `
+    Invoke-WebRequest -Uri "https://download.docker.com/linux/static/$env:DOCKER_CHANNEL/x86_64/docker-$env:DOCKER_VERSION.tgz" -OutFile ./docker.tgz -UseBasicParsing ; `
+    tar --extract --file docker.tgz --strip-components 1 --directory /usr/local/bin/ `
+    rm docker.tgz `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
