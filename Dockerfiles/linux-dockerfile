@@ -2,8 +2,9 @@
 
 FROM mcr.microsoft.com/powershell:6.2.0-ubuntu-18.04
 
-ARG agentversion=2.160.1
-ARG kubectlversion=1.14.6
+ARG agentversion=2.163.2
+ARG kubectlversion=1.14.8
+ARG helmversion=helm-v3.0.2
 
 ENV agentversion=${agentversion}
 ENV kubectlversion=${kubectlversion}
@@ -34,11 +35,11 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     chmod +x ./kubectl ; `
     mv ./kubectl /usr/local/bin/kubectl ; `
     #curl -L https://git.io/get_helm.sh | bash ; `
-    Invoke-WebRequest -Uri https://get.helm.sh/helm-v3.0.0-rc.2-linux-amd64.tar.gz -OutFile ./helm-v3.0.0-rc.2-linux-amd64.tar.gz -UseBasicParsing ; `
-    tar -xvzf ./helm-v3.0.0-rc.2-linux-amd64.tar.gz ; `
+    Invoke-WebRequest -Uri "https://get.helm.sh/$env:helmversion-linux-amd64.tar.gz" -OutFile ./$env:helmversion-linux-amd64.tar.gz -UseBasicParsing ; `
+    tar -xvzf ./$env:helmversion-linux-amd64.tar.gz ; `
     mv linux-amd64/helm /usr/local/bin ; `
     rm -R linux-amd64/ ; `
-    rm helm-v3.0.0-rc.2-linux-amd64.tar.gz ; `
+    rm $env:helmversion-linux-amd64.tar.gz ; `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./run.sh" ]
