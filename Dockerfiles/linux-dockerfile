@@ -2,7 +2,7 @@
 
 FROM mcr.microsoft.com/powershell:6.2.0-ubuntu-18.04
 
-ARG agentversion=2.163.2
+ARG agentversion=2.164.6
 ARG kubectlversion=1.15.5
 ARG helmversion=helm-v3.0.2
 ARG DockerChannel="stable"
