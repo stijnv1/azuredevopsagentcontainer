@@ -47,6 +47,8 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     Invoke-WebRequest -Uri "https://download.docker.com/linux/static/$env:DOCKER_CHANNEL/x86_64/docker-$env:DOCKER_VERSION.tgz" -OutFile ./docker.tgz -UseBasicParsing ; `
     tar --extract --file ./docker.tgz --strip-components 1 --directory /usr/local/bin/ ; `
     rm docker.tgz ; `
+    curl -sL https://deb.nodesource.com/setup_13.x | bash ; `
+    apt-get install -y nodejs ; `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./externals/node/bin/node ./bin/AgentService.js interactive" ]
