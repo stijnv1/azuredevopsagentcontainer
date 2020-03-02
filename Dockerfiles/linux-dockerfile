@@ -49,6 +49,11 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     rm docker.tgz ; `
     curl -sL https://deb.nodesource.com/setup_13.x | bash ; `
     apt-get install -y nodejs ; `
+    Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-linux" -OutFile ./azcopy.tar -UseBasicParsing ; ``
+    mkdir azcopy ; `
+    tar -xvzf downloadazcopy-v10-linux -C azcopy --strip-components=1 ; `
+    mv azcopy/azcopy /usr/local/bin ; `
+    rm -R azcopy ; `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./externals/node/bin/node ./bin/AgentService.js interactive" ]
