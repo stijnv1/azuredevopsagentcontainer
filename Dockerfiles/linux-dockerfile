@@ -1,10 +1,8 @@
 # escape=`
 
-FROM mcr.microsoft.com/powershell:7.0.0-rc.3-ubuntu-18.04
+FROM mcr.microsoft.com/powershell:7.0.0-ubuntu-18.04
 
-ARG agentversion=2.164.6
-ARG kubectlversion=1.15.5
-ARG helmversion=helm-v3.0.2
+ARG agentversion=2.166.4
 ARG DockerChannel="stable"
 ARG DockerVersion="19.03.5"
 
@@ -35,25 +33,11 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     apt-get update ; `
     apt-get install dotnet-sdk-2.2 -y ; `
     apt-get install zip -y ; `
-    Invoke-WebRequest -Uri "https://storage.googleapis.com/kubernetes-release/release/v$env:kubectlversion/bin/linux/amd64/kubectl" -OutFile "./kubectl" -UseBasicParsing ; `
-    chmod +x ./kubectl ; `
-    mv ./kubectl /usr/local/bin/kubectl ; `
-    #curl -L https://git.io/get_helm.sh | bash ; `
-    Invoke-WebRequest -Uri "https://get.helm.sh/$env:helmversion-linux-amd64.tar.gz" -OutFile ./$env:helmversion-linux-amd64.tar.gz -UseBasicParsing ; `
-    tar -xvzf ./$env:helmversion-linux-amd64.tar.gz ; `
-    mv linux-amd64/helm /usr/local/bin ; `
-    rm -R linux-amd64/ ; `
-    rm $env:helmversion-linux-amd64.tar.gz ; `
     Invoke-WebRequest -Uri "https://download.docker.com/linux/static/$env:DOCKER_CHANNEL/x86_64/docker-$env:DOCKER_VERSION.tgz" -OutFile ./docker.tgz -UseBasicParsing ; `
     tar --extract --file ./docker.tgz --strip-components 1 --directory /usr/local/bin/ ; `
     rm docker.tgz ; `
     curl -sL https://deb.nodesource.com/setup_13.x | bash ; `
     apt-get install -y nodejs ; `
-    Invoke-WebRequest -Uri "https://aka.ms/downloadazcopy-v10-linux" -OutFile ./azcopy.tar -UseBasicParsing ; ``
-    mkdir azcopy ; `
-    tar -xvzf azcopy.tar -C azcopy --strip-components=1 ; `
-    mv azcopy/azcopy /usr/local/bin ; `
-    rm -R azcopy ; `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./externals/node/bin/node ./bin/AgentService.js interactive" ]
