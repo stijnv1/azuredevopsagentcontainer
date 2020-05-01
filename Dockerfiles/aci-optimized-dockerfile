@@ -2,7 +2,7 @@
 
 FROM mcr.microsoft.com/powershell:7.0.0-ubuntu-18.04
 
-ARG agentversion=2.168.0
+ARG agentversion=2.166.4
 
 ENV agentversion=${agentversion}
 
