@@ -11,7 +11,7 @@ properties: # Properties of container group
       - name: VSTS_AGENT_INPUT_URL
         value: "#{URL}#"
       - name: VSTS_AGENT_INPUT_AUTH
-        value: "#{PAT}#"
+        value: "#{AUTH}#"
       - name: VSTS_AGENT_INPUT_TOKEN
         value: "#{AzureDevopsPAT}#"
       - name: VSTS_AGENT_INPUT_AGENT
