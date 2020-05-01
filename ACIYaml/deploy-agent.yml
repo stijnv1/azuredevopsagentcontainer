@@ -1,0 +1,33 @@
+name: "azdlinuxagent"  # Name of the container group
+apiVersion: '2018-10-01'
+location: "westeurope"
+tags: {}
+properties: # Properties of container group
+  containers: # Array of container instances in the group
+  - name: linuxagent-1 # Name of an instance
+    properties: # Properties of an instance
+      image: #{ACRIMAGE}# # Container image used to create the instance
+      environmentVariables:
+      - name: VSTS_AGENT_INPUT_URL
+        value: "#{URL}#"
+      - name: VSTS_AGENT_INPUT_AUTH
+        value: "#{PAT}#"
+      - name: VSTS_AGENT_INPUT_TOKEN
+        value: "#{AzureDevopsPAT}#"
+      - name: VSTS_AGENT_INPUT_AGENT
+        value: "#{AGENT}#"
+      - name: VSTS_AGENT_INPUT_POOL
+        value: "#{POOL}#"
+      resources: # Resource requirements of the instance
+        requests:
+          memoryInGB: 4
+          cpu: 2
+        limits:
+          memoryInGB: 4
+          cpu: 2
+  imageRegistryCredentials: # Credentials to pull a private image
+  - server: #{ACRSERVER}#
+    username: "#{ACRUSERNAME}#"
+    password: "#{ACRPASSWORD}#"
+  restartPolicy: OnFailure
+  osType: Linux
