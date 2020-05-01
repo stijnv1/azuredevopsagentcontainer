@@ -3,13 +3,8 @@
 FROM mcr.microsoft.com/powershell:7.0.0-ubuntu-18.04
 
 ARG agentversion=2.168.0
-ARG DockerChannel="stable"
-ARG DockerVersion="19.03.5"
 
 ENV agentversion=${agentversion}
-ENV kubectlversion=${kubectlversion}
-ENV DOCKER_CHANNEL=${DockerChannel}
-ENV DOCKER_VERSION=${DockerVersion}
 
 SHELL [ "pwsh", "-NoProfile", "-Command" ]
 
@@ -31,13 +26,7 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     rm ./packages-microsoft-prod.deb ; `
     apt-get install ca-certificates curl apt-transport-https lsb-release gnupg -y ; `
     apt-get update ; `
-    apt-get install dotnet-sdk-2.2 -y ; `
     apt-get install zip -y ; `
-    Invoke-WebRequest -Uri "https://download.docker.com/linux/static/$env:DOCKER_CHANNEL/x86_64/docker-$env:DOCKER_VERSION.tgz" -OutFile ./docker.tgz -UseBasicParsing ; `
-    tar --extract --file ./docker.tgz --strip-components 1 --directory /usr/local/bin/ ; `
-    rm docker.tgz ; `
-    curl -sL https://deb.nodesource.com/setup_13.x | bash ; `
-    apt-get install -y nodejs ; `
     curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./externals/node/bin/node ./bin/AgentService.js interactive" ]

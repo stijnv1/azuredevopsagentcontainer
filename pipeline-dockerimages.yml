@@ -32,6 +32,6 @@ stages:
         azureSubscription: svhbh54-msdn
         scriptLocation: inlineScript
         inlineScript: |
-          az acr build --registry $(acrname) --image azuredevopslinuxagent:$(Build.BuildId) --file Dockerfiles/linux-dockerfile .
+          az acr build --registry $(acrname) --image azdlinuxagent:$(Build.BuildId) --file Dockerfiles/aci-optimized-dockerfile .
         
         
