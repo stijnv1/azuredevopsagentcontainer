@@ -9,9 +9,8 @@ trigger: none
 stages:
 - stage: 'deploy_acicontainergroup'
   displayName: 'Deploy ACI Container Group for Azure DevOps Agent'
-  variables:
-    - group: 'ACI-AzureDevOpsAgent'
   jobs:
+  # ACI for azure devops org svhbh54
   - job: 'deploy_aci_azuredevopsagent'
     displayName: 'Deploy ACI Container Group'
     continueOnError: false
@@ -19,12 +18,49 @@ stages:
       vmImage: 'ubuntu-latest'
     workspace:
       clean: all
+    variables:
+    - group: 'ACI-AzureDevOpsAgent'
     steps:
     - task: AzureKeyVault@1
       inputs:
         azureSubscription: 'svhbh54-msdn'
         KeyVaultName: 'svhbh54keyvault'
         SecretsFilter: AzureDevopsPAT
+    - task: replacetokens@3
+      inputs:
+        rootDirectory: 'ACIYaml'
+        targetFiles: '*.yml'
+        encoding: 'auto'
+        writeBOM: true
+        actionOnMissing: 'warn'
+        keepToken: false
+        tokenPrefix: '#{'
+        tokenSuffix: '}#'
+        useLegacyPattern: false
+        enableTelemetry: true
+    - task: AzureCLI@1
+      inputs:
+        azureSubscription: svhbh54-msdn
+        scriptLocation: inlineScript
+        inlineScript: |
+          az container create -g $(rgName) -f ACIYaml/deploy-agent.yml
+  
+  # ACI for azure devops org R-IS
+  - job: 'deploy_aci_azuredevopsagent'
+    displayName: 'Deploy ACI Container Group'
+    continueOnError: false
+    pool:
+      vmImage: 'ubuntu-latest'
+    workspace:
+      clean: all
+    variables:
+    - group: 'ACI-AzureDevOpsAgent-RIS'
+    steps:
+    - task: AzureKeyVault@1
+      inputs:
+        azureSubscription: 'svhbh54-msdn'
+        KeyVaultName: 'svhbh54keyvault'
+        SecretsFilter: AzureDevopsPAT-RIS
     - task: replacetokens@3
       inputs:
         rootDirectory: 'ACIYaml'
