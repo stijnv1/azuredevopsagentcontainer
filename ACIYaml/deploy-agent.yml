@@ -1,4 +1,4 @@
-name: "azdlinuxagent"  # Name of the container group
+name: "#{ACINAME}#"  # Name of the container group
 apiVersion: '2018-10-01'
 location: "westeurope"
 tags: {}
