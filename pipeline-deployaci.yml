@@ -46,7 +46,7 @@ stages:
           az container create -g $(rgName) -f ACIYaml/deploy-agent.yml
   
   # ACI for azure devops org R-IS
-  - job: 'deploy_aci_azuredevopsagent'
+  - job: 'deploy_aci_azuredevopsagent_ris'
     displayName: 'Deploy ACI Container Group'
     continueOnError: false
     pool:

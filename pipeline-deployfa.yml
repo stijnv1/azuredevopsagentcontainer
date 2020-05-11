@@ -1,15 +1,6 @@
 name: $(BuildID)
 
-trigger:
-  branches:
-    include:
-    - master
-
-  paths:
-    include:
-    - AzureFunction/*
-    exclude:
-    - README.md
+trigger: none
 
 variables:
   - group: PowershellFunctions

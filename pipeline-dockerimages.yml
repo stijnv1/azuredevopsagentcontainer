@@ -3,16 +3,7 @@ name: $(BuildID)
 variables:
   acrname: sverhoacrrd
 
-trigger:
-  branches:
-    include:
-    - master
-
-  paths:
-    include:
-    - Dockerfiles/*
-    exclude:
-    - README.md
+trigger: none
 
 stages:
 - stage: 'build_linuxcontainer'

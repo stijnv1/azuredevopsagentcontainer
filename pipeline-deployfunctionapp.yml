@@ -5,17 +5,7 @@ variables:
     value: RG-Functions
   - group: PowershellFunctions
 
-trigger:
-  branches:
-    include:
-    - master
-
-  paths:
-    include:
-    - ARMTemplates/templates/*
-    - ARMTemplates/parameters/*
-    exclude:
-    - README.md
+trigger: none
 
 stages:
   - stage: 'validate_stage_template'
