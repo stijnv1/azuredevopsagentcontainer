@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: azdevopslinuxagents
+  namespace: devopsagents
+spec:
+  selector:
+    matchLabels:
+      app: linuxdevopsagents 
+  serviceName: "nginx"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: linuxdevopsagents
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: azdevopslinuxagent
+        image: sverhoacrrd.azurecr.io/azuredevopslinuxagent:2716
+        envFrom:
+          - configMapRef:
+              name: azdevopsagentvariables
+          - secretRef:
+              name: azdevopsagentsecrets
+        volumeMounts:
+        - name: dockersock
+          mountPath: "/var/run/docker.sock"
+      volumes:
+        - name: dockersock
+          hostPath:
+            path: /var/run/docker.sock
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: azdevopsagentvariables
+  namespace: devopsagents
+data:
+  VSTS_AGENT_INPUT_URL: ''
+  VSTS_AGENT_INPUT_AUTH: ''
+  VSTS_AGENT_INPUT_AGENT: ''
+  VSTS_AGENT_INPUT_POOL: ''
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: azdevopsagentsecrets
+  namespace: devopsagents
+data:
+  VSTS_AGENT_INPUT_TOKEN: ''
+type: Opaqu
