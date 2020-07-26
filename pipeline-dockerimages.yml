@@ -9,8 +9,8 @@ stages:
 - stage: 'build_linuxcontainer'
   displayName: 'Build Linux Docker Image for Azure DevOps Agent'
   jobs:
-  - job: 'build_linux_container'
-    displayName: 'Docker Linux Container Build Job'
+  - job: 'build_linux_container_acioptimized'
+    displayName: 'Docker Linux Container Build Job Optimized Image'
     continueOnError: false
     pool:
       vmImage: 'ubuntu-latest'
@@ -23,5 +23,20 @@ stages:
         scriptLocation: inlineScript
         inlineScript: |
           az acr build --registry $(acrname) --image azdlinuxagent:$(Build.BuildId) --file Dockerfiles/aci-optimized-dockerfile .
+
+  - job: 'build_linux_container_full'
+    displayName: 'Docker Linux Container Build Job Full Image' 
+    continueOnError: false
+    pool:
+      vmImage: 'ubuntu-latest'
+    workspace:
+      clean: all
+    steps:
+    - task: AzureCLI@1
+      inputs:
+        azureSubscription: svhbh54-msdn
+        scriptLocation: inlineScript
+        inlineScript: |
+          az acr build --registry $(acrname) --image azuredevopslinuxagent:$(Build.BuildId) --file Dockerfiles/linux-dockerfile .
         
         
