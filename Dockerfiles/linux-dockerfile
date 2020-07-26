@@ -38,6 +38,8 @@ RUN $ProgressPreference = 'SilentlyContinue' ; `
     rm docker.tgz ; `
     curl -sL https://deb.nodesource.com/setup_13.x | bash ; `
     apt-get install -y nodejs ; `
-    curl -sL https://aka.ms/InstallAzureCLIDeb | bash ;
+    curl -sL https://aka.ms/InstallAzureCLIDeb | bash ; ``
+    Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -OutFile "/usr/local/bin/docker-compose" ; ``
+    chmod +x /usr/local/bin/docker-compose
 
 ENTRYPOINT [ "/bin/bash", "-c", "./config.sh --unattended --replace && ./externals/node/bin/node ./bin/AgentService.js interactive" ]
